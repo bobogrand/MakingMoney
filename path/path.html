@@ -15,13 +15,24 @@
 
     <!-- Custom CSS -->
     <link href="css/shop-item.css" rel="stylesheet">
-
+	
+	<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=Jne19fSZiXCHrBUaWjRX"></script>
+	<!-- Naver map API-->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+	<!--네이버 지도를 띄우기 위함-->
+	<script type="text/javascript">
+	temp=location.href.split("?");
+	data=temp[1].split(":");
+		function go(){
+			window.open("http://map.naver.com/index.nhn?slng="+data[0]+"&slat="+data[1].start_Lat+"&stext=출발지&elng="+data[2].end_Lng+"&elat="+data[3].end_Lat+"&etext=도착지&menu=route&pathType=1");
+		}
+	</script>
+	<!---------------------------->
 </head>
 
 <body>
@@ -66,16 +77,11 @@
 		<!-- 검색 기능 -->
             <div class="col-md-3">
                 <p class="lead">Search</p>
-					<form method = "POST">
+					<form name="myform" method = "POST">
 					<div class = "form-group">
-						<label>시작날짜</td></label>
-						<input type="date" name="start_date"/>
-						<label>종료날짜</td></label>
-						<input type="date" name="end_date"/>
-						<br>
 						<label>도시 </label>
-						<input type ="text" name="city" id="city">
-						<input type="submit" class="btn btn-success" value ="검색">
+						<input type ="text"  name="city" id="city">
+						<input type="submit" onclick="go()" class="btn btn-success" value ="검색">
 						</div>
 					</form>
             </div>
@@ -89,7 +95,31 @@
 						reviews=0
 				%>
                 <div class="thumbnail">
-                    <img class="img-responsive" src="http://placehold.it/800x300" alt="">
+					<div id="map2" style="width:800px;height:300px;"></div>
+					<script>
+								
+								//Geolocation API에 액세스할 수 있는지를 확인
+								if(navigator.geolocation)
+									//위치 정보를 얻기
+								   navigator.geolocation.getCurrentPosition(success,error);
+								// 크롬에서 GS 좌표 얻을 수 있게
+								else
+								   elt.innerHTML="이 브라우저에서는 Geolocation이 지원되지 않습니다.";
+								
+								function error(e){
+									elt.innerHTML="Geolocation 오류"+e.code+":"+e.message;
+								}//에러 발생시 수행 코드
+								
+								function success(pos){
+									var mapOptions = {
+										center : new naver.maps.LatLng(pos.coords.latitude,pos.coords.longitude),
+										zoom : 10
+											         };
+									var map = new naver.maps.Map('map2',mapOptions);
+
+								}//성공시 수행 코드
+
+					</script>
                     <div class="caption-full">
                         <h4><a href="#"><%= path_name %></a>
                         </h4>
