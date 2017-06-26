@@ -135,7 +135,7 @@ try:
 				continue
 			if(len(d3[e]) != 8) or d3[e].find('2017') == -1:
 				d3[e] = d2[e]
-			
+
 			sql = 'insert into festival(f_name, start_date, end_date, f_city) values(%s,%s,%s,%s);'
 		
 #			sql = 'insert into festival(f_name, start_date, end_date, f_city) values({0},{1},{2},{3});'.format(d1[e],d2[e],d3[e],d4[e])

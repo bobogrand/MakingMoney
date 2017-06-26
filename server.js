@@ -18,7 +18,6 @@ var options = {
 var port1 = 80;
 var port2 = 443;
 
-var data;
 /*추가*/
 
 var connection = mysql.createConnection({
@@ -27,7 +26,6 @@ var connection = mysql.createConnection({
 	database : 'capestone2'
 });
 connection.connect();
-
 app = express();
 
 app.use(bodyParser.json());
@@ -58,8 +56,13 @@ app.use(morgan('combined'));
 
 
 // INDEX
-app.get('/',function(req,res){
-	console.log(__dirname);
+app.get('/',function(req,res){	
+	
+	var star = '';
+
+	for (var i = 0; i < 5; i++){
+		star += '<span class="glyphicon glyphicon-star"></span>\n';
+	}
 	fs.readFile('./index.html','utf8',function(err,html){
 			res.writeHeader(200,{'content-type':'text/html'});
 			res.end(ejs.render(html,{
@@ -72,8 +75,8 @@ app.get('/',function(req,res){
 				strname4 : '전주 한옥마을을 경유하는 자전거 경로. 초보자에게 추천',
 				reviews4 : 1,
 				strname5 : '추천 글귀를 올려주세요!',
-				reiviews5 : 0
-			}));
+				reiviews5 : 0,
+			}).replace('<%= star_count %>',star));
 	});
 });
 
@@ -110,59 +113,88 @@ app.get('/path',function(req,res,fields){
 	});
 	fs.readFile('./path/path.html','utf-8',function(err,html){
 		res.writeHeader(200,{'Content-Type':'text/html'});
-		res.end(ejs.render(html));
+		html = html.replace('__data__','');
+		res.end(html);
 	});
 	console.log("get query %d ",path_id);
 });
 
 app.post('/path',function(req,res){
-		var path_id = 0;
+		var data = [];
 		var city = req.body.city;
 		var sql = 'select * from path where p_city like ' + '\'%'+ req.body.city+'%\'';
 		connection.query(sql,function(err,rows,fields){
-			var data=[];
 			data.push(rows[0].start_Lng);
 			data.push(rows[0].start_Lat);
 			data.push(rows[0].end_Lng);
 			data.push(rows[0].end_Lat);
-			console.log("result is :"+data[0]);
+			fs.readFile("./path/path.html","utf8",function(err,html){
+				var path_id = 'http://map.naver.com/index.nhn?slng='+data[0]+'&slat='+data[1]+'&elng='+data[2]+'&elat='+data[3];
+				res.writeHeader(200,{'content-type':'text/html'});
+				html=html.replace('__data__',path_id);
+				res.end(html);
+			});
 			console.log(rows);
 		});
 		console.log(req.body);
-		res.redirect('/path');
 });
-
 app.post('/',function(req,res){
 	var start_date = req.body.start_date;
 	var end_date = req.body.end_date;
 	var city = req.body.city;
-	var sql = 'select * from festival where ';
+	var sql = 'select * from festival  where';
 
-
+	var list_festival ='';
+	var list_path ='';
 	if (city != ''){
-		sql += 'f_city like' + '\'%'+ city + '%\' ';
+		sql += ' f_city like' + '\'%'+ city + '%\'';
 
 	}
+
+	
 	if (start_date != ''){
 		if(city != '')
-			sql += ' or ';
-		sql += ' start_date >= ' + start_date;
+			sql += ' and ';
+		sql += " start_date >= '" + start_date + "'";
 		if(end_date != ''){
 			sql += ' and ';
-			sql += 'end_date <= ' + end_date;
+			sql += "end_date <= '" + end_date +"'";
 		}
 	}
 
+	// 생긴 각 도시 별로 path를 출력 해줘야한다.
 
+	console.log("festival sql : ");
+	console.log(sql);
 	connection.query(sql,function(err,rows){
-			console.log(rows);
+		console.log("festival list : ");
+		console.log(rows);
+		list_festival = JSON.stringify(rows);
 	});
-	
-	console.log(req.body);
 
+	sql = 'select * from path where p_city like '+ '\'%';
+	sql += city;
+	sql += '%\'';
+	/* 이 부분이 path 결로 입니다. */
+	connection.query(sql,function(err,rows){
+		console.log("path list : ");
+		console.log(rows);
+		list_path = JSON.stringify(rows);
+	});
+
+	fs.readFile('./path/list.html','utf-8',function(err,html){
+		res.writeHeader(200,{'content-type':'text/html'});
+		html = html.replace('__rows__',list_festival);
+		html = html.replace('__pdata__',list_path);
+		res.end(html);
+	});
+	console.log(req.body);
 });
 
 app.get('/list',function(req,res){
+
+
+
 	fs.readFile('./path/list.html','utf-8',function(err,html){
 		res.writeHeader(200,{'content-type':'text/html'});
 		res.end(ejs.render(html,{
@@ -175,7 +207,7 @@ app.get('/list',function(req,res){
 			strname4 : '전주 한옥마을을 경유하는 자전거 경로. 초보자에게 추천',
 			reviews4 : 1,
 			strname5 : '추천 글귀를 올려주세요!',
-			reviews5 : 0
+			reviews5 : 0,
 		}));
 
 	});

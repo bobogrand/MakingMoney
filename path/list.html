@@ -71,55 +71,62 @@
 					<tr>
 						<th>#</th>
 						<th>축제명</th>
-						<th>날짜</th>
+						<th>시작날짜</th>
+						<th>종료날짜</th>
 						<th>장소</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<th scope="row">1</th>
-						<td>축제명1</td>
-						<td>20170627</td>
-						<td>통영</td>
-					</tr>
-					<tr>
-						<th scope="row">2</th>
-						<td>축제명2</td>
-						<td>20170627</td>
-						<td>전주</td>
-					</tr>
+					<script>
+						var print='';
+						var json_rows=__rows__;
+						for (var e in json_rows){
+						 	print+='<tr>';
+							print+='<th scope="row">'+e;
+							print+='</th>';
+							print+='<td>';
+							print+=json_rows[e].f_name;
+							print+='</td>';
+							print+='<td>';
+							print+=json_rows[e].start_date;
+							print+='</td>';
+							print+='<td>';
+							print+=json_rows[e].end_date;
+							print+='</td>';
+							print+='<td>';
+							print+=json_rows[e].f_city;
+							print+='</td>';
+							print+='</tr>';
+						}
+						document.write(print);
+					</script>
 				</tbody>
 			</table>
 			</div>
 		</div>
 	
 	
-		<div class = "pagination">
-			<li><a href="#">Prev</a></li>
-			<li><a href="#">Next</a></li>
-		</div>
 	<div class="row">
-
-		<div class="col-sm-4 col-lg-4 col-md-4">
-			<div class="thumbnail">
-				<img src="http://placehold.it/320x150" alt="">
-				<div class="caption">
-					<h4><a href="#">서울</a>
-					</h4>
-				</div>
-				<div class="ratings">
-					<p class="pull-right"><%= reviews1 %> reviews</p>
-					<p>
-						<span class="glyphicon glyphicon-star"></span>
-						<span class="glyphicon glyphicon-star"></span>
-						<span class="glyphicon glyphicon-star"></span>
-						<span class="glyphicon glyphicon-star"></span>
-						<span class="glyphicon glyphicon-star"></span>
-					</p>
-				</div>
-			</div>
-		</div>
-
+		<script>
+		var json_pdata=__pdata__;
+		for(var p in json_pdata){
+		var bot='';
+		bot+='<div class="col-sm-4 col-lg-4 col-md-4">';
+		bot+='<div class="thumbnail">';
+		bot+='<div class="caption">';
+		bot+='<h4><a href='
+		bot+='http://map.naver.com/index.nhn?slng='+json_pdata[p].start_Lng+'&slat='+json_pdata[p].start_Lat+'&elng='+json_pdata[p].end_Lng+'&elat='+json_pdata[p].end_Lat;
+		bot+='>'
+		bot+=json_pdata[p].p_name;	
+		bot+='</a>';
+		bot+='</h4>';
+		bot+='</div>';
+		bot+='</div>';
+		bot+='</div>';
+		document.write(bot);
+		}
+		</script>
+		<!--
 		<div class="col-sm-4 col-lg-4 col-md-4">
 			<div class="thumbnail">
 				<img src="http://placehold.it/320x150" alt="">
@@ -204,6 +211,7 @@
 			</div>
 		</div>
 	</div>
+	-->
     </div>
     <!-- /.container -->
 

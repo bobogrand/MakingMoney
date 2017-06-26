@@ -26,13 +26,9 @@
     <![endif]-->
 	<!--네이버 지도를 띄우기 위함-->
 	<script type="text/javascript">
-	temp=location.href.split("?");
-	data=temp[1].split(":");
-		function go(){
-			window.open("http://map.naver.com/index.nhn?slng="+data[0]+"&slat="+data[1].start_Lat+"&stext=출발지&elng="+data[2].end_Lng+"&elat="+data[3].end_Lat+"&etext=도착지&menu=route&pathType=1");
-		}
+	window.open("__data__");
+	
 	</script>
-	<!---------------------------->
 </head>
 
 <body>
@@ -81,7 +77,7 @@
 					<div class = "form-group">
 						<label>도시 </label>
 						<input type ="text"  name="city" id="city">
-						<input type="submit" onclick="go()" class="btn btn-success" value ="검색">
+						<input type="submit" class="btn btn-success" value ="검색">
 						</div>
 					</form>
             </div>
@@ -92,7 +88,7 @@
 						path_name = "자전거길",
 						good = 0,
 						bad = 0,
-						reviews=0
+						reviews=0,
 				%>
                 <div class="thumbnail">
 					<div id="map2" style="width:800px;height:300px;"></div>
